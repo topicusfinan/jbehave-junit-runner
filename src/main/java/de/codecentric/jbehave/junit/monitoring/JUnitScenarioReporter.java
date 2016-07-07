@@ -148,10 +148,7 @@ public class JUnitScenarioReporter implements StoryReporter
 				{
 					notifier.fireTestFinished(currentStoryDescription);
 				}
-				else
-				{
-					notifier.fireTestFailure(new Failure(currentStoryDescription, new RuntimeException("story failed!")));
-				}
+
 				if (currentStoryDescription.isTest())
 				{
 					testCounter++;
@@ -239,7 +236,6 @@ public class JUnitScenarioReporter implements StoryReporter
 			}
 			else
 			{
-				notifier.fireTestFailure(new Failure(currentScenario, new RuntimeException("scenario failed!")));
 				anyScenarioFailedInCurrentStory = true;
 				// TODO: Code review this. Do we really need to keep track of
 				// failed steps between scenarios?
