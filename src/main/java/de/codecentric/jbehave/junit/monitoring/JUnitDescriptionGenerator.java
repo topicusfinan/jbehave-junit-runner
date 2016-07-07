@@ -65,7 +65,7 @@ public class JUnitDescriptionGenerator
 
 	public String getJunitSafeString(String string)
 	{
-		return uniq.getUniqueDescription(replaceLinebreaks(string).replaceAll("[\\(\\)]", "|"));
+		return uniq.getUniqueDescription(replaceLinebreaks(string).replaceAll("[\\(\\)]", "|").replaceAll("\\.story", ""));
 	}
 
 	public int getTestCases()
