@@ -5,3 +5,5 @@ test_output
 /target
 /.project
 /.classpath
+
+.idea/

@@ -3,7 +3,7 @@ package de.codecentric.jbehave.junit.monitoring;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jbehave.core.ConfigurableEmbedder;
@@ -25,7 +25,8 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.Statement;
 
-public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
+public class JUnitReportingRunner extends BlockJUnit4ClassRunner
+{
 	private List<Description> storyDescriptions;
 	private Embedder configuredEmbedder;
 	private List<String> storyPaths;
@@ -36,14 +37,17 @@ public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
 	private ConfigurableEmbedder configurableEmbedder;
 
 	@SuppressWarnings("unchecked")
-	public JUnitReportingRunner(Class<? extends ConfigurableEmbedder> testClass)
-			throws Throwable {
+	public JUnitReportingRunner(Class<? extends ConfigurableEmbedder> testClass) throws Throwable
+	{
 		super(testClass);
 		configurableEmbedder = testClass.newInstance();
 
-		if (configurableEmbedder instanceof JUnitStories) {
+		if (configurableEmbedder instanceof JUnitStories)
+		{
 			getStoryPathsFromJUnitStories(testClass);
-		} else if (configurableEmbedder instanceof JUnitStory) {
+		}
+		else if (configurableEmbedder instanceof JUnitStory)
+		{
 			getStoryPathsFromJUnitStory();
 		}
 
@@ -57,12 +61,14 @@ public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	public Description getDescription() {
+	public Description getDescription()
+	{
 		return rootDescription;
 	}
 
 	@Override
-	public int testCount() {
+	public int testCount()
+	{
 		return numberOfTestCases;
 	}
 
@@ -72,36 +78,44 @@ public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
 	 * filter and sort)
 	 */
 	@Override
-	protected Statement childrenInvoker(final RunNotifier notifier) {
-		return new Statement() {
+	protected Statement childrenInvoker(final RunNotifier notifier)
+	{
+		return new Statement()
+		{
 			@Override
-			public void evaluate() {
-				JUnitScenarioReporter junitReporter = new JUnitScenarioReporter(
-				notifier, numberOfTestCases, rootDescription, configuration.keywords());
+			public void evaluate()
+			{
+				JUnitScenarioReporter junitReporter = new JUnitScenarioReporter(notifier, numberOfTestCases, rootDescription, configuration.keywords());
 				// tell the reporter how to handle pending steps
-				junitReporter.usePendingStepStrategy(configuration
-						.pendingStepStrategy());
-			
+				junitReporter.usePendingStepStrategy(configuration.pendingStepStrategy());
+
 				addToStoryReporterFormats(junitReporter);
-			
-				try {
+
+				try
+				{
 					configuredEmbedder.runStoriesAsPaths(storyPaths);
-				} catch (Throwable e) {
+				}
+				catch (Throwable e)
+				{
 					throw new RuntimeException(e);
-				} finally {
+				}
+				finally
+				{
 					configuredEmbedder.generateCrossReference();
 				}
 			}
 		};
 	}
-	
-	public static EmbedderControls recommandedControls(Embedder embedder) {
+
+	public static EmbedderControls recommandedControls(Embedder embedder)
+	{
 		return recommendedControls(embedder);
 	}
 
-	public static EmbedderControls recommendedControls(Embedder embedder) {
+	public static EmbedderControls recommendedControls(Embedder embedder)
+	{
 		return embedder.embedderControls()
-		// don't throw an exception on generating reports for failing stories
+				// don't throw an exception on generating reports for failing stories
 				.doIgnoreFailureInView(true)
 				// don't throw an exception when a story failed
 				.doIgnoreFailureInStories(true)
@@ -109,90 +123,95 @@ public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
 				.useThreads(1);
 	}
 
-	private void createCandidateStepsWith(StepMonitor stepMonitor) {
+	private void createCandidateStepsWith(StepMonitor stepMonitor)
+	{
 		// reset step monitor and recreate candidate steps
 		configuration.useStepMonitor(stepMonitor);
 		getCandidateSteps();
-		for (CandidateSteps step : candidateSteps) {
+		for (CandidateSteps step : candidateSteps)
+		{
 			step.configuration().useStepMonitor(stepMonitor);
 		}
 	}
 
-	private StepMonitor createCandidateStepsWithNoMonitor() {
+	private StepMonitor createCandidateStepsWithNoMonitor()
+	{
 		StepMonitor usedStepMonitor = configuration.stepMonitor();
 		createCandidateStepsWith(new NullStepMonitor());
 		return usedStepMonitor;
 	}
 
-	private void getStoryPathsFromJUnitStory() {
+	private void getStoryPathsFromJUnitStory()
+	{
 		configuredEmbedder = configurableEmbedder.configuredEmbedder();
-		StoryPathResolver resolver = configuredEmbedder.configuration()
-				.storyPathResolver();
-		storyPaths = Arrays.asList(resolver.resolve(configurableEmbedder
-				.getClass()));
+		StoryPathResolver resolver = configuredEmbedder.configuration().storyPathResolver();
+		storyPaths = Collections.singletonList(resolver.resolve(configurableEmbedder.getClass()));
 	}
 
 	@SuppressWarnings("unchecked")
-	private void getStoryPathsFromJUnitStories(
-			Class<? extends ConfigurableEmbedder> testClass)
-			throws NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException {
+	private void getStoryPathsFromJUnitStories(Class<? extends ConfigurableEmbedder> testClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+	{
 		configuredEmbedder = configurableEmbedder.configuredEmbedder();
 		Method method = makeStoryPathsMethodPublic(testClass);
-		storyPaths = ((List<String>) method.invoke(
-				(JUnitStories) configurableEmbedder, (Object[]) null));
+		storyPaths = ((List<String>) method.invoke(configurableEmbedder, (Object[]) null));
 	}
 
-	private Method makeStoryPathsMethodPublic(
-			Class<? extends ConfigurableEmbedder> testClass)
-			throws NoSuchMethodException {
+	private Method makeStoryPathsMethodPublic(Class<? extends ConfigurableEmbedder> testClass) throws NoSuchMethodException
+	{
 		Method method;
-		try {
+		try
+		{
 			method = testClass.getDeclaredMethod("storyPaths", (Class[]) null);
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e)
+		{
 			method = testClass.getMethod("storyPaths", (Class[]) null);
 		}
 		method.setAccessible(true);
 		return method;
 	}
 
-	private void getCandidateSteps() {
+	private void getCandidateSteps()
+	{
 		// candidateSteps = configurableEmbedder.configuredEmbedder()
 		// .stepsFactory().createCandidateSteps();
-		InjectableStepsFactory stepsFactory = configurableEmbedder
-				.stepsFactory();
-		if (stepsFactory != null) {
+		InjectableStepsFactory stepsFactory = configurableEmbedder.stepsFactory();
+		if (stepsFactory != null)
+		{
 			candidateSteps = stepsFactory.createCandidateSteps();
-		} else {
+		}
+		else
+		{
 			Embedder embedder = configurableEmbedder.configuredEmbedder();
 			candidateSteps = embedder.candidateSteps();
-			if (candidateSteps == null || candidateSteps.isEmpty()) {
+			if (candidateSteps == null || candidateSteps.isEmpty())
+			{
 				candidateSteps = embedder.stepsFactory().createCandidateSteps();
 			}
 		}
 	}
 
-	private void initRootDescription() {
-		rootDescription = Description
-				.createSuiteDescription(configurableEmbedder.getClass());
-		for (Description storyDescription : storyDescriptions) {
+	private void initRootDescription()
+	{
+		rootDescription = Description.createSuiteDescription(configurableEmbedder.getClass());
+		for (Description storyDescription : storyDescriptions)
+		{
 			rootDescription.addChild(storyDescription);
 		}
 	}
 
-	private void addToStoryReporterFormats(JUnitScenarioReporter junitReporter) {
-		StoryReporterBuilder storyReporterBuilder = configuration
-				.storyReporterBuilder();
-		StoryReporterBuilder.ProvidedFormat junitReportFormat = new StoryReporterBuilder.ProvidedFormat(
-				junitReporter);
+	private void addToStoryReporterFormats(JUnitScenarioReporter junitReporter)
+	{
+		StoryReporterBuilder storyReporterBuilder = configuration.storyReporterBuilder();
+		StoryReporterBuilder.ProvidedFormat junitReportFormat = new StoryReporterBuilder.ProvidedFormat(junitReporter);
 		storyReporterBuilder.withFormats(junitReportFormat);
 	}
 
-	private List<Description> buildDescriptionFromStories() {
-		JUnitDescriptionGenerator descriptionGenerator = new JUnitDescriptionGenerator(
-				candidateSteps, configuration);
+	private List<Description> buildDescriptionFromStories()
+	{
+		JUnitDescriptionGenerator descriptionGenerator = new JUnitDescriptionGenerator(candidateSteps, configuration);
 		StoryRunner storyRunner = new StoryRunner();
-		List<Description> storyDescriptions = new ArrayList<Description>();
+		List<Description> storyDescriptions = new ArrayList<>();
 
 		addSuite(storyDescriptions, "BeforeStories");
 		addStories(storyDescriptions, storyRunner, descriptionGenerator);
@@ -203,19 +222,19 @@ public class JUnitReportingRunner extends BlockJUnit4ClassRunner {
 		return storyDescriptions;
 	}
 
-	private void addStories(List<Description> storyDescriptions,
-			StoryRunner storyRunner, JUnitDescriptionGenerator gen) {
-		for (String storyPath : storyPaths) {
-			Story parseStory = storyRunner
-					.storyOfPath(configuration, storyPath);
+	private void addStories(List<Description> storyDescriptions, StoryRunner storyRunner, JUnitDescriptionGenerator gen)
+	{
+		for (String storyPath : storyPaths)
+		{
+			Story parseStory = storyRunner.storyOfPath(configuration, storyPath);
 			Description descr = gen.createDescriptionFrom(parseStory);
 			storyDescriptions.add(descr);
 		}
 	}
 
-	private void addSuite(List<Description> storyDescriptions, String name) {
-		storyDescriptions.add(Description.createTestDescription(Object.class,
-				name));
+	private void addSuite(List<Description> storyDescriptions, String name)
+	{
+		storyDescriptions.add(Description.createTestDescription(Object.class, name));
 		numberOfTestCases++;
 	}
 }

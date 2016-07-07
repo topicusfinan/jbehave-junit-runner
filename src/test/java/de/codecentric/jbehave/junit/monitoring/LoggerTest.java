@@ -12,7 +12,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class LoggerTest {
+public class LoggerTest
+{
 
 	@Mock
 	PrintStream stream;
@@ -20,7 +21,8 @@ public class LoggerTest {
 	private Logger logger;
 
 	@Before
-	public void setup() {
+	public void setup()
+	{
 		System.clearProperty(Logger.PROP_JJM_LOGLEVEL);
 		logger = new Logger();
 		MockitoAnnotations.initMocks(this);
@@ -28,20 +30,23 @@ public class LoggerTest {
 	}
 
 	@Test
-	public void shouldLogNothingForLoglevelNull() {
+	public void shouldLogNothingForLoglevelNull()
+	{
 		logger.info("Should be lost");
 		verifyZeroInteractions(stream);
 	}
 
 	@Test
-	public void shouldLogNothingForUnknownLogLevle() {
+	public void shouldLogNothingForUnknownLogLevle()
+	{
 		setLevel("invalid");
 		logger.info("Should be lost");
 		verifyZeroInteractions(stream);
 	}
 
 	@Test
-	public void shoudLogNothingForLogLevelNone() {
+	public void shoudLogNothingForLogLevelNone()
+	{
 		setLevel("NONE");
 		logger.info("lost info");
 		logger.debug("lost debug");
@@ -49,7 +54,8 @@ public class LoggerTest {
 	}
 
 	@Test
-	public void shouldLogInfoForInfo() {
+	public void shouldLogInfoForInfo()
+	{
 		setLevel("INFO");
 		String msg = "I am very informative";
 		logger.info(msg);
@@ -57,7 +63,8 @@ public class LoggerTest {
 	}
 
 	@Test
-	public void shouldLogDebugForDebug() {
+	public void shouldLogDebugForDebug()
+	{
 		setLevel("DEBUG");
 		String msg = "hunting for insects";
 		logger.debug(msg);
@@ -65,7 +72,8 @@ public class LoggerTest {
 	}
 
 	@Test
-	public void shouldLogInfoForDebug() {
+	public void shouldLogInfoForDebug()
+	{
 		setLevel("DEBUG");
 		String msg = "info on debug";
 		logger.info(msg);
@@ -73,31 +81,35 @@ public class LoggerTest {
 	}
 
 	@Test
-	public void shouldHandleStringVars() {
+	public void shouldHandleStringVars()
+	{
 		setLevel("INFO");
 		logger.info("I {} very {}", "am", "informative");
 		verify(stream).println("INFO: I am very informative");
 	}
 
 	@Test
-	public void shouldHandleNullVars() {
+	public void shouldHandleNullVars()
+	{
 		setLevel("INFO");
 		logger.info("{} is the {} of most {}", null, "root", "evil");
 		verify(stream).println("INFO: null is the root of most evil");
 	}
 
 	@Test
-	public void shouldHandleNonStringVars() {
+	public void shouldHandleNonStringVars()
+	{
 		setLevel("INFO");
 		List<Long> longs = new ArrayList<Long>();
 		longs.add(1L);
 		longs.add(2L);
 		longs.add(3L);
-		logger.info("{} is not in {}", Integer.valueOf(0), longs);
+		logger.info("{} is not in {}", 0, longs);
 		verify(stream).println("INFO: 0 is not in [1, 2, 3]");
 	}
 
-	private void setLevel(String aLevelToSet) {
+	private void setLevel(String aLevelToSet)
+	{
 		System.setProperty(Logger.PROP_JJM_LOGLEVEL, aLevelToSet);
 	}
 }

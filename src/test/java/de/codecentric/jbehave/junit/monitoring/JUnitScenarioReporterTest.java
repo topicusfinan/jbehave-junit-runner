@@ -23,7 +23,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.verification.VerificationModeFactory;
 
-public class JUnitScenarioReporterTest {
+public class JUnitScenarioReporterTest
+{
 
 	private static final String NAME_SCENARIO = "scenario";
 	private static final String NAME_STORY = "story";
@@ -45,15 +46,13 @@ public class JUnitScenarioReporterTest {
 	private Keywords keywords;
 
 	@Before
-	public void setUp() {
+	public void setUp()
+	{
 		MockitoAnnotations.initMocks(this);
-		rootDescription = Description.createTestDescription(this.getClass(),
-				NAME_ROOT);
-		storyDescription = Description.createTestDescription(this.getClass(),
-				NAME_STORY);
+		rootDescription = Description.createTestDescription(this.getClass(), NAME_ROOT);
+		storyDescription = Description.createTestDescription(this.getClass(), NAME_STORY);
 		rootDescription.addChild(storyDescription);
-		scenarioDescription = Description.createTestDescription(
-				this.getClass(), NAME_SCENARIO);
+		scenarioDescription = Description.createTestDescription(this.getClass(), NAME_SCENARIO);
 		storyDescription.addChild(scenarioDescription);
 
 		story = new Story();
@@ -62,15 +61,14 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldCopeWithDescriptionNamesWhenSimilarButForExtraCharacters()
-			throws Exception {
+	public void shouldCopeWithDescriptionNamesWhenSimilarButForExtraCharacters() throws Exception
+	{
 
 		Description child1 = addChildToScenario("child");
 		Description child2 = addChildToScenario("child.");
 		Description child3 = addChildToScenario("child..");
 
-		reporter = new JUnitScenarioReporter(notifier, THREE_STEPS,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, THREE_STEPS, rootDescription, keywords);
 
 		reportStoryAndScenarioStart(reporter);
 		reportStepSuccess(reporter);
@@ -84,12 +82,12 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldHandleFailedSteps() throws Exception {
+	public void shouldHandleFailedSteps() throws Exception
+	{
 
 		Description child1 = addChildToScenario("child");
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_STEP, rootDescription, keywords);
 
 		reportStoryAndScenarioStart(reporter);
 		reportStepFailure(reporter);
@@ -101,10 +99,10 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldHandleIgnorableSteps() throws Exception {
+	public void shouldHandleIgnorableSteps() throws Exception
+	{
 		Description comment = addChildToScenario("!-- Comment");
-		reporter = new JUnitScenarioReporter(notifier, ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_STEP, rootDescription, keywords);
 
 		reportStoryAndScenarioStart(reporter);
 		verifyStoryStarted();
@@ -117,12 +115,12 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldNotifyAboutBeforeStories() {
+	public void shouldNotifyAboutBeforeStories()
+	{
 		Description beforeStories = addBeforeStories();
 		Description child = addChildToScenario("child");
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_BEFORE_STORIES
-				+ ONE_STEP, rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_BEFORE_STORIES + ONE_STEP, rootDescription, keywords);
 
 		Story beforeStoriesStory = new Story();
 		beforeStoriesStory.namedAs("BeforeStories");
@@ -144,11 +142,11 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void failureInBeforeStoriesShouldCountOnce() {
+	public void failureInBeforeStoriesShouldCountOnce()
+	{
 		Description beforeStories = addBeforeStories();
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_BEFORE_STORIES
-				+ ONE_STEP, rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_BEFORE_STORIES + ONE_STEP, rootDescription, keywords);
 
 		Story beforeStoriesStory = new Story();
 		beforeStoriesStory.namedAs("BeforeStories");
@@ -164,14 +162,13 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldNotifyAboutAfterStories() {
+	public void shouldNotifyAboutAfterStories()
+	{
 		Description child = addChildToScenario("child");
-		Description afterStories = Description.createTestDescription(
-				Object.class, "AfterStories");
+		Description afterStories = Description.createTestDescription(Object.class, "AfterStories");
 		rootDescription.addChild(afterStories);
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_STEP
-				+ ONE_AFTER_STORIES, rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_STEP + ONE_AFTER_STORIES, rootDescription, keywords);
 
 		Story afterStoriesStory = new Story();
 		afterStoriesStory.namedAs("AfterStories");
@@ -194,15 +191,14 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldNotifyGivenStory() {
+	public void shouldNotifyGivenStory()
+	{
 
-		Description givenStoryDescription = Description
-				.createSuiteDescription("aGivenStory");
+		Description givenStoryDescription = Description.createSuiteDescription("aGivenStory");
 		scenarioDescription.addChild(givenStoryDescription);
 		Description child = addChildToScenario("child");
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_GIVEN + ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_GIVEN + ONE_STEP, rootDescription, keywords);
 
 		Story givenStory = new Story();
 		givenStory.namedAs("aGivenStory");
@@ -220,18 +216,16 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldNotifyCompositeSteps() {
+	public void shouldNotifyCompositeSteps()
+	{
 		// one story, one scenario, one step, two composite steps
 		Description child = addChildToScenario("child");
-		Description comp1 = Description.createTestDescription(this.getClass(),
-				"comp1");
+		Description comp1 = Description.createTestDescription(this.getClass(), "comp1");
 		child.addChild(comp1);
-		Description comp2 = Description.createTestDescription(this.getClass(),
-				"comp2");
+		Description comp2 = Description.createTestDescription(this.getClass(), "comp2");
 		child.addChild(comp2);
 
-		reporter = new JUnitScenarioReporter(notifier, TWO_COMPOSITE_STEPS,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, TWO_COMPOSITE_STEPS, rootDescription, keywords);
 
 		reportStoryAndScenarioStart(reporter);
 		reporter.beforeStep("child");
@@ -251,15 +245,13 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldPrepareExampleStepsBeforeScenario() {
+	public void shouldPrepareExampleStepsBeforeScenario()
+	{
 		// one story, one scenario, one example, one step,
-		Description example = addChildToScenario(keywords.examplesTableRow() + " "
-				+ "row");
-		Description step = Description.createTestDescription(this.getClass(),
-				"Step");
+		Description example = addChildToScenario(keywords.examplesTableRow() + " " + "row");
+		Description step = Description.createTestDescription(this.getClass(), "Step");
 		example.addChild(step);
-		reporter = new JUnitScenarioReporter(notifier, ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_STEP, rootDescription, keywords);
 		reportStoryAndScenarioStart(reporter);
 		reporter.example(null);
 		reportStepSuccess(reporter);
@@ -271,20 +263,17 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldHandleExampleStepsInCombinationWithGivenStories() {
+	public void shouldHandleExampleStepsInCombinationWithGivenStories()
+	{
 		// one story, one scenario, one given story, one example, one step
-		Description givenStoryDescription = Description
-				.createSuiteDescription("aGivenStory");
+		Description givenStoryDescription = Description.createSuiteDescription("aGivenStory");
 		scenarioDescription.addChild(givenStoryDescription);
 		// one story, one scenario, one example, one step,
-		Description example = addChildToScenario(keywords.examplesTableRow() + " "
-				+ "row");
-		Description step = Description.createTestDescription(this.getClass(),
-				"Step");
+		Description example = addChildToScenario(keywords.examplesTableRow() + " " + "row");
+		Description step = Description.createTestDescription(this.getClass(), "Step");
 		example.addChild(step);
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_GIVEN + ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_GIVEN + ONE_STEP, rootDescription, keywords);
 
 		reporter.beforeStory(story, false);
 		reporter.beforeScenario(NAME_SCENARIO);
@@ -302,19 +291,18 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldFailForPendingStepsAtBothStepAndScenarioLevelsIfConfigurationSaysSo() {
+	public void shouldFailForPendingStepsAtBothStepAndScenarioLevelsIfConfigurationSaysSo()
+	{
 		Description child = addChildToScenario("child");
 
-		reporter = new JUnitScenarioReporter(notifier, ONE_STEP,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, ONE_STEP, rootDescription, keywords);
 
 		PendingStepStrategy strategy = new FailingUponPendingStep();
 		reporter.usePendingStepStrategy(strategy);
 
 		reportStoryAndScenarioStart(reporter);
 		reporter.pending("child");
-		reporter.failed("child",
-				new UUIDExceptionWrapper(new Exception("FAIL")));
+		reporter.failed("child", new UUIDExceptionWrapper(new Exception("FAIL")));
 		verifyStoryStarted();
 		verifyScenarioStarted();
 		verify(notifier).fireTestStarted(child);
@@ -323,64 +311,65 @@ public class JUnitScenarioReporterTest {
 	}
 
 	@Test
-	public void shouldIgnorePendingStepsIfConfigurationSaysSo() {
+	public void shouldIgnorePendingStepsIfConfigurationSaysSo()
+	{
 		Description child = addChildToScenario("child");
 
-		reporter = new JUnitScenarioReporter(notifier, 3,
-				rootDescription, keywords);
+		reporter = new JUnitScenarioReporter(notifier, 3, rootDescription, keywords);
 
 		reportStoryAndScenarioStart(reporter);
 		reporter.pending("child");
 		verifyStoryStarted();
 		verifyScenarioStarted();
-		verify(notifier, VerificationModeFactory.times(0)).fireTestStarted(
-				child);
+		verify(notifier, VerificationModeFactory.times(0)).fireTestStarted(child);
 		verify(notifier).fireTestIgnored(child);
 	}
 
 	@Test
-	public void shouldHandleFailuresInBeforeStories() {
-		reporter = new JUnitScenarioReporter(notifier, 1,
-				rootDescription, keywords);
+	public void shouldHandleFailuresInBeforeStories()
+	{
+		reporter = new JUnitScenarioReporter(notifier, 1, rootDescription, keywords);
 
 		reporter.beforeStory(story, false);
-		reporter.failed(NAME_STORY, new UUIDExceptionWrapper("Error Message",
-				new RuntimeException("Cause")));
-		ArgumentCaptor<Failure> argument = ArgumentCaptor
-				.forClass(Failure.class);
+		reporter.failed(NAME_STORY, new UUIDExceptionWrapper("Error Message", new RuntimeException("Cause")));
+		ArgumentCaptor<Failure> argument = ArgumentCaptor.forClass(Failure.class);
 		verify(notifier).fireTestFailure(argument.capture());
 		assertThat(argument.getValue().getDescription(), is(storyDescription));
 	}
 
-	private void reportScenarioAndStoryFinish(JUnitScenarioReporter reporter) {
+	private void reportScenarioAndStoryFinish(JUnitScenarioReporter reporter)
+	{
 		reporter.afterScenario();
 		// test should not be finished until we send the final event
-		verify(notifier, VerificationModeFactory.times(0)).fireTestRunFinished(
-				Mockito.<Result> anyObject());
+		verify(notifier, VerificationModeFactory.times(0)).fireTestRunFinished(Mockito.<Result> anyObject());
 		reporter.afterStory(false);
 	}
 
-	private void reportStoryAndScenarioStart(JUnitScenarioReporter reporter) {
+	private void reportStoryAndScenarioStart(JUnitScenarioReporter reporter)
+	{
 		reporter.beforeStory(story, false);
 		reporter.beforeScenario(NAME_SCENARIO);
 	}
 
-	private void reportStepSuccess(JUnitScenarioReporter reporter) {
+	private void reportStepSuccess(JUnitScenarioReporter reporter)
+	{
 		reporter.beforeStep("child");
 		reporter.successful("child");
 	}
 
-	private void reportStepFailure(JUnitScenarioReporter reporter) {
+	private void reportStepFailure(JUnitScenarioReporter reporter)
+	{
 		reporter.beforeStep("child");
-		reporter.failed("child",
-				new UUIDExceptionWrapper(new Exception("FAIL")));
+		reporter.failed("child", new UUIDExceptionWrapper(new Exception("FAIL")));
 	}
 
-	private void reportIgnorable(JUnitScenarioReporter reporter) {
+	private void reportIgnorable(JUnitScenarioReporter reporter)
+	{
 		reporter.ignorable("!-- Comment");
 	}
 
-	private void reportGivenStoryEvents() {
+	private void reportGivenStoryEvents()
+	{
 		Story givenStory = new Story();
 		givenStory.namedAs("aGivenStory");
 
@@ -394,60 +383,69 @@ public class JUnitScenarioReporterTest {
 		// End Given Story
 	}
 
-	private void verifyTestFinish() {
+	private void verifyTestFinish()
+	{
 		verifyScenarioFinished();
 		verifyStoryFinished();
 		verifyTestRunFinished();
 	}
 
-	private void verifyTestStart() {
+	private void verifyTestStart()
+	{
 		verifyTestRunStarted();
 		verifyStoryStarted();
 		verifyScenarioStarted();
 	}
 
-	private void verifyStoryFinished() {
+	private void verifyStoryFinished()
+	{
 		verify(notifier).fireTestFinished(storyDescription);
 	}
 
-	private void verifyScenarioFinished() {
+	private void verifyScenarioFinished()
+	{
 		verify(notifier).fireTestFinished(scenarioDescription);
 	}
 
-	private void verifyScenarioStarted() {
+	private void verifyScenarioStarted()
+	{
 		verify(notifier).fireTestStarted(scenarioDescription);
 	}
 
-	private void verifyStoryStarted() {
+	private void verifyStoryStarted()
+	{
 		verify(notifier).fireTestStarted(storyDescription);
 	}
 
-	private void verifyStepSuccess(Description step) {
+	private void verifyStepSuccess(Description step)
+	{
 		verify(notifier).fireTestStarted(step);
 		verify(notifier).fireTestFinished(step);
 	}
 
-	private void verifyTestRunFinished() {
+	private void verifyTestRunFinished()
+	{
 		verify(notifier).fireTestRunFinished(Matchers.<Result> anyObject());
 	}
 
-	private void verifyTestRunStarted() {
+	private void verifyTestRunStarted()
+	{
 		verify(notifier).fireTestRunStarted(Matchers.<Description> anyObject());
 	}
 
-	private Description addBeforeStories() {
+	private Description addBeforeStories()
+	{
 		rootDescription = rootDescription.childlessCopy();
-		Description beforeStories = Description.createTestDescription(
-				Object.class, "BeforeStories");
+		Description beforeStories = Description.createTestDescription(Object.class, "BeforeStories");
 		rootDescription.addChild(beforeStories);
 		rootDescription.addChild(storyDescription);
 		return beforeStories;
 	}
 
-	private Description addChildToScenario(String childName) {
+	private Description addChildToScenario(String childName)
+	{
 
-		Description child = Description.createTestDescription(this.getClass(),
-				childName);
+		Description child = Description.createTestDescription(this.getClass(), childName);
 		scenarioDescription.addChild(child);
 		return child;
 	}

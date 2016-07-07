@@ -10,20 +10,23 @@ import org.junit.Test;
  *
  * The result in IntelliJ 13.1 Community Edition is that there are two lines of info reported about test outcomes:
  * (OK) IgnoredTestsTest
- *      (OK) shouldPass
+ * (OK) shouldPass
  *
  * This implies to me that the jbehave-junit-runner should behave similarly that even if there are stories/scenarios
  * that are ignored (via meta tag filtering) then the highest level node should show (OK) and not (Pending).
  */
-public class IgnoredTestsTest {
+public class IgnoredTestsTest
+{
 
 	@Test
-	public void shouldPass() {
+	public void shouldPass()
+	{
 		// Nothing to do. Wish this test to pass.
 	}
 
 	@Ignore
-	public void shouldBeIgnored() {
+	public void shouldBeIgnored()
+	{
 		// Nothing to do. Wish this test to be ignored.
 	}
 }

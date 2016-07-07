@@ -9,20 +9,24 @@ import org.jbehave.core.steps.InstanceStepsFactory;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitReportingRunner.class)
-public class FailedStepInScenarioJUnitStory extends JUnitStory {
+public class FailedStepInScenarioJUnitStory extends JUnitStory
+{
 
-	public FailedStepInScenarioJUnitStory() {
+	public FailedStepInScenarioJUnitStory()
+	{
 		JUnitReportingRunner.recommendedControls(configuredEmbedder());
 
 	}
 
 	@Override
-	public InjectableStepsFactory stepsFactory() {
+	public InjectableStepsFactory stepsFactory()
+	{
 		return new InstanceStepsFactory(configuration(), new ExampleSteps());
 	}
 
 	@Override
-	public Configuration configuration() {
+	public Configuration configuration()
+	{
 		// add custom coverters
 		return new MostUsefulConfiguration();
 	}

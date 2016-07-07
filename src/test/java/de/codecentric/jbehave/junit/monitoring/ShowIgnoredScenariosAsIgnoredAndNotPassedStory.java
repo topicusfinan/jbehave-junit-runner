@@ -1,5 +1,7 @@
 package de.codecentric.jbehave.junit.monitoring;
 
+import java.util.Collections;
+
 import de.codecentric.jbehave.junit.monitoring.step.ExampleSteps;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.configuration.MostUsefulConfiguration;
@@ -8,23 +10,25 @@ import org.jbehave.core.steps.InjectableStepsFactory;
 import org.jbehave.core.steps.InstanceStepsFactory;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-
 @RunWith(JUnitReportingRunner.class)
-public class ShowIgnoredScenariosAsIgnoredAndNotPassedStory extends JUnitStory {
+public class ShowIgnoredScenariosAsIgnoredAndNotPassedStory extends JUnitStory
+{
 
-	public ShowIgnoredScenariosAsIgnoredAndNotPassedStory() {
+	public ShowIgnoredScenariosAsIgnoredAndNotPassedStory()
+	{
 		JUnitReportingRunner.recommendedControls(configuredEmbedder());
-		configuredEmbedder().useMetaFilters(Arrays.asList("-skip"));
+		configuredEmbedder().useMetaFilters(Collections.singletonList("-skip"));
 	}
 
 	@Override
-	public InjectableStepsFactory stepsFactory() {
+	public InjectableStepsFactory stepsFactory()
+	{
 		return new InstanceStepsFactory(configuration(), new ExampleSteps());
 	}
 
 	@Override
-	public Configuration configuration() {
+	public Configuration configuration()
+	{
 		// add custom coverters
 		return new MostUsefulConfiguration();
 	}

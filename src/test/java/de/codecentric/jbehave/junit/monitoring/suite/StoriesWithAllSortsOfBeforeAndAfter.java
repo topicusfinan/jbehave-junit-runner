@@ -3,6 +3,10 @@ package de.codecentric.jbehave.junit.monitoring.suite;
 import java.util.Arrays;
 import java.util.List;
 
+import de.codecentric.jbehave.junit.monitoring.JUnitReportingRunner;
+import de.codecentric.jbehave.junit.monitoring.Logger;
+import de.codecentric.jbehave.junit.monitoring.step.ExampleSteps;
+import de.codecentric.jbehave.junit.monitoring.step.InitSteps;
 import org.jbehave.core.Embeddable;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.configuration.MostUsefulConfiguration;
@@ -19,11 +23,6 @@ import org.jbehave.core.steps.ParameterControls;
 import org.jbehave.core.steps.StepMonitor;
 import org.junit.runner.RunWith;
 
-import de.codecentric.jbehave.junit.monitoring.JUnitReportingRunner;
-import de.codecentric.jbehave.junit.monitoring.Logger;
-import de.codecentric.jbehave.junit.monitoring.step.ExampleSteps;
-import de.codecentric.jbehave.junit.monitoring.step.InitSteps;
-
 /**
  * <p>
  * {@link Embeddable} class to run multiple textual stories via JUnit.
@@ -34,32 +33,24 @@ import de.codecentric.jbehave.junit.monitoring.step.InitSteps;
  * </p>
  */
 @RunWith(JUnitReportingRunner.class)
-public class StoriesWithAllSortsOfBeforeAndAfter extends JUnitStories {
+public class StoriesWithAllSortsOfBeforeAndAfter extends JUnitStories
+{
 
 	private Configuration configuration;
 
-	public StoriesWithAllSortsOfBeforeAndAfter() {
+	public StoriesWithAllSortsOfBeforeAndAfter()
+	{
 		System.setProperty(Logger.PROP_JJM_LOGLEVEL, "debug");
 		JUnitReportingRunner.recommendedControls(configuredEmbedder());
 
-		CrossReference crossReference = new CrossReference("dummy")
-				.withJsonOnly().withOutputAfterEachStory(true)
-				.excludingStoriesWithNoExecutedScenarios(true);
-		StepMonitor stepMonitor = new DelegatingStepMonitor(
-				crossReference.getStepMonitor());
-		configuration = new MostUsefulConfiguration()
-				.useStepMonitor(stepMonitor)
-				.usePendingStepStrategy(new FailingUponPendingStep())
-				.useStoryReporterBuilder(
-						new StoryReporterBuilder().withDefaultFormats()
-								.withFailureTrace(true)
-								.withFormats(Format.XML, Format.HTML)
-								.withCrossReference(crossReference))
-				.useParameterControls(new ParameterControls("<", ">", true));
+		CrossReference crossReference = new CrossReference("dummy").withJsonOnly().withOutputAfterEachStory(true).excludingStoriesWithNoExecutedScenarios(true);
+		StepMonitor stepMonitor = new DelegatingStepMonitor(crossReference.getStepMonitor());
+		configuration = new MostUsefulConfiguration().useStepMonitor(stepMonitor).usePendingStepStrategy(new FailingUponPendingStep()).useStoryReporterBuilder(new StoryReporterBuilder().withDefaultFormats().withFailureTrace(true).withFormats(Format.XML, Format.HTML).withCrossReference(crossReference)).useParameterControls(new ParameterControls("<", ">", true));
 	}
 
 	@Override
-	public Configuration configuration() {
+	public Configuration configuration()
+	{
 		// when working with CrossReferences, you have to return the same
 		// configuration INSTANCE => generate it once (in the constructor)
 		// and reuse it here.
@@ -67,15 +58,15 @@ public class StoriesWithAllSortsOfBeforeAndAfter extends JUnitStories {
 	}
 
 	@Override
-	public InjectableStepsFactory stepsFactory() {
-		return new InstanceStepsFactory(configuration(), new ExampleSteps(),
-				new InitSteps());
+	public InjectableStepsFactory stepsFactory()
+	{
+		return new InstanceStepsFactory(configuration(), new ExampleSteps(), new InitSteps());
 	}
 
 	@Override
-	protected List<String> storyPaths() {
-		return Arrays
-				.asList("de/codecentric/jbehave/junit/monitoring/MultiplicationWithExamplesAndGiven.story");
+	protected List<String> storyPaths()
+	{
+		return Arrays.asList("de/codecentric/jbehave/junit/monitoring/MultiplicationWithExamplesAndGiven.story");
 	}
 
 }
